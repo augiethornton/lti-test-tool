@@ -1,0 +1,20 @@
+{
+  "name": "lti-test-tool",
+  "version": "0.0.1",
+  "description": "Module for building an LTI Tool Provider for testing and integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ims",
+    "lti",
+    "tool",
+    "provider"
+  ],
+  "author": "August Thornton",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
