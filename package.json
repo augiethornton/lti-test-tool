@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/augiethornton/lti-test-tool.git"
+  },
   "keywords": [
     "ims",
     "lti",
@@ -15,6 +19,11 @@
   "author": "August Thornton",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.0"
+    "axios": "^0.15.3",
+    "body-parser": "^1.16.0",
+    "crypto": "0.0.3",
+    "express": "^4.14.0",
+    "oauth-1.0a": "^2.1.0",
+    "uuid": "^3.0.1"
   }
 }

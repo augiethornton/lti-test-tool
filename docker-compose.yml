@@ -1,0 +1,10 @@
+version: '2'
+services:
+  lti-test-tool:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "3007:3007"
+    environment:
+      VIRTUAL_HOST: nodelti.docker
