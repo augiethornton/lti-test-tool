@@ -12,5 +12,5 @@ RUN chown -R docker:docker $APP_HOME
 
 USER docker
 
-EXPOSE 8080
+EXPOSE 3000
 CMD ["node", "index.js"]

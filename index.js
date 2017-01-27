@@ -1,8 +1,8 @@
 const app = require('express')()
 const bodyParser = require('body-parser')
-const routes  = require('./routes/api/routes')
+const routes  = require('./routes/routes')
 
-const PORT = 8080
+const PORT = 3000
 
 const middleware = {
   logger: (req, res, next) => {
@@ -22,8 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/', routes)
 
-app.use('/api', routes)
-
 app.listen(PORT, () => {
-  console.log(`Express Server listening on port ${PORT}`)
+  console.log(`Express server listening on port ${PORT}`)
 })

@@ -2,24 +2,33 @@ const uuidV4 = require('uuid/v4')()
 
 module.exports = {
 
-  "@context" : "http://purl.imsglobal.org/ctx/lti/v2/ToolProxy",
+  "@context": "http://purl.imsglobal.org/ctx/lti/v2/ToolProxy",
 
-  "@type" : "ToolProxy",
+  "@type": "ToolProxy",
 
-  "@id" : "instructure.com/lti-test-tool/" + uuidV4,
+  "@id": "instructure.com/lti-test-tool/" + uuidV4,
 
-  "lti_version" : "LTI-2p1",
+  "lti_version": "LTI-2p1",
 
-  "tool_proxy_guid" : "",
+  "tool_proxy_guid": "",
 
-  "security_contract" : { "shared_secret" : "" },
+  "enabled_capability": [ "OAuth.splitSecret" ],
 
-  "tool_consumer_profile" : "",
+  "security_contract": {
+    "tp_half_shared_secret": "",
+    "tool_service": [
+      { "@type": "RestService",
+        "service": "",
+        "action": ["POST", "PUT", "GET"]
+      }
+    ]
+  },
+  "tool_consumer_profile": "",
 
   "tool_profile": {
     "lti_version": "LTI-2p1",
     "product_instance": {
-      "guid": "" + uuidV4,
+      "guid": uuidV4,
       "product_info": {
         "product_name": {
           "default_value": "lti-test-tool",
@@ -39,7 +48,7 @@ module.exports = {
       }
     },
     "base_url_choice": [
-      { "default_base_url": "http://localhost:8080" || "http://nodelti.docker",
+      { "default_base_url": "http://localhost:3000" || "http://nodelti.docker",
         "selector": {
           "applies_to": ["MessageHandler"]
         }
@@ -54,8 +63,8 @@ module.exports = {
         },
         "message": [{
           "message_type": "basic-lti-launch-request",
-          "path": "lti_launch",
-          "enabled_capability": ["Canvas.placements.courseNavigation"]
+          "path": "/launch",
+          "enabled_capability": ["Canvas.placements.similarityDetection"]
         }]
       }
     ]
