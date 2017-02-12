@@ -13,4 +13,4 @@ RUN chown -R docker:docker $APP_HOME
 USER docker
 
 EXPOSE 3000
-CMD ["node", "index.js"]
+CMD ["node", "app.js"]

@@ -4,12 +4,12 @@ const crypto = require('crypto')
 const url = require('url')
 const jwt = require('jsonwebtoken')
 const uuidV4 = require('uuid/v4')()
-const toolProxyJSON = require('../../config/toolProxy')
+const toolProxyJSON = require('../config/tool_proxy')
 
 exports.register = (req, res) => {
   const endpoint = req.body.tc_profile_url
   const method = 'GET'
-  const oauth = configureOAuth(req)
+  const oauth = configureOAuth(req, res)
   const request = {
     method: method,
     url: endpoint,
@@ -25,6 +25,7 @@ exports.register = (req, res) => {
     }
   })
   .then((tcp) => {
+	  console.log(tcp.data)
     toolProxyRequest(req, res, tcp)
   })
   .catch((err) => {
@@ -86,12 +87,28 @@ function buildTcpServiceUrl (tcp, index) {
   return service
 }
 
-function configureOAuth (req) {
+function configureOAuth (req, res) {
+	function consumerCredentials (req, res) {
+		if (process.env.DEVELOPER_KEY_GLOBAL_ID && process.env.DEVELOPER_KEY_API_KEY) {
+			let consumer = {
+	      key: process.env.DEVELOPER_KEY_GLOBAL_ID,
+	      secret: process.env.DEVELOPER_KEY_API_KEY
+	    }
+	    return consumer
+	  } else if (req.body.reg_key && req.body.reg_password) {
+		  let consumer = {
+			  key: req.body.reg_key,
+			  secret: req.body.reg_password
+		  }
+		  return consumer
+	  } else {
+	    res.status(500).send({ error: 'Consumer key and secret not found' })
+	    return
+	  }
+	}
+	const consumer = consumerCredentials(req, res)
   const oauth = OAuth({
-    consumer: {
-      key: process.env.DEVELOPER_KEY_GLOBAL_ID,
-      secret: process.env.DEVELOPER_KEY_API_KEY,
-    },
+	  consumer,
     signature_method: 'HMAC-SHA1',
     hash_function: (baseString, key) => {
       return crypto.createHmac('sha1', key).update(baseString).digest('base64')
@@ -101,7 +118,7 @@ function configureOAuth (req) {
 }
 
 function authorizationJwtRequest (req, res, tcp, toolProxyResponse) {
-  const AuthorizationJWT = generateJWT(req, tcp, toolProxyResponse)
+  const authorizationJWT = generateJWT(req, tcp, toolProxyResponse)
   const service = buildTcpServiceUrl(tcp, 1)
 
   axios({
@@ -109,7 +126,7 @@ function authorizationJwtRequest (req, res, tcp, toolProxyResponse) {
     method: 'POST',
     data: {
       grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: AuthorizationJWT
+      assertion: authorizationJWT
     }
   })
   .then((res) => {
@@ -123,16 +140,11 @@ function authorizationJwtRequest (req, res, tcp, toolProxyResponse) {
 function generateJWT (req, tcp, toolProxyResponse) {
   const toolProxyGuid = toolProxyResponse.data.tool_proxy_guid
   const service = buildTcpServiceUrl(tcp, 1)
+  const secret = toolProxyResponse.data.tc_half_shared_secret + req.body.reg_password
   const payload = {
-    "iss": toolProxyGuid,
     "sub": toolProxyGuid,
     "aud": service,
     "jti": uuidV4
   }
-  const secret = toolProxyResponse.data.tc_half_shared_secret + req.body.reg_password
-  const header = {
-    kid: toolProxyGuid
-  }
-  const token = jwt.sign(payload, secret, { header: header, expiresIn: '1m' })
-  return token
+  return token = jwt.sign(payload, secret, { expiresIn: '1m' })
 }

@@ -6,13 +6,13 @@ module.exports = {
 
   "@type": "ToolProxy",
 
-  "@id": "instructure.com/lti-test-tool/" + uuidV4,
+  "@id": "instructure.com/ToolProxy/" + uuidV4,
 
   "lti_version": "LTI-2p1",
 
   "tool_proxy_guid": "",
 
-  "enabled_capability": [ "OAuth.splitSecret" ],
+  "enabled_capability": [ "Security.splitSecret" ],
 
   "security_contract": {
     "tp_half_shared_secret": "",
@@ -31,24 +31,28 @@ module.exports = {
       "guid": uuidV4,
       "product_info": {
         "product_name": {
-          "default_value": "lti-test-tool",
-          "key": "tool.name"
+          "default_value": "lti-test-tool"
         },
-        "product_version": "2.x",
+        "product_version": "2.1",
+        "description" : {
+	      	"default_value": "Node LTI Tool for testing Canvas Tool Consumer functionality"
+	      },
         "product_family": {
           "code": "lti-test-tool",
           "vendor": {
             "code": "Instructure.com",
             "vendor_name": {
-              "default_value": "Instructure",
-              "key": "tool.vendor.name"
-            }
+              "default_value": "Instructure"
+            },
+            "description" : {
+	            "default_value": "Canvas Learning Management System"
+	          }
           }
         }
       }
     },
     "base_url_choice": [
-      { "default_base_url": "http://localhost:3000" || "http://nodelti.docker",
+      { "default_base_url": process.env.BASE_URL || "http://localhost:3000",
         "selector": {
           "applies_to": ["MessageHandler"]
         }
@@ -56,15 +60,19 @@ module.exports = {
     ],
     "resource_handler": [
       {
-        "resource_type": {"code": "lti-test-tool"},
+        "resource_type": {
+	        "code": "lti-test-tool"
+	      },
         "resource_name": {
-          "default_value": "lti-test-tool",
-          "key": "lti-test-tool.resource.name"
+          "default_value": "lti-test-tool"
         },
         "message": [{
           "message_type": "basic-lti-launch-request",
           "path": "/launch",
-          "enabled_capability": ["Canvas.placements.similarityDetection"]
+          "enabled_capability": [
+          	"Canvas.placements.similarityDetection", "Message.documentTarget", "Message.locale", 
+          	"ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId", "Membership.role"
+          ]
         }]
       }
     ]

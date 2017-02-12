@@ -1,6 +1,6 @@
 version: '2'
 services:
-  lti-test-tool:
+  app:
     build: .
     volumes:
       - .:/usr/src/app
