@@ -71,7 +71,8 @@ module.exports = {
           "path": "/launch",
           "enabled_capability": [
           	"Canvas.placements.similarityDetection", "Message.documentTarget", "Message.locale", 
-          	"ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId", "Membership.role"
+          	"ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId", 
+          	"Membership.role", "Context.id"
           ]
         }]
       }

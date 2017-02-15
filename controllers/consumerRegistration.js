@@ -4,7 +4,7 @@ const crypto = require('crypto')
 const url = require('url')
 const jwt = require('jsonwebtoken')
 const uuidV4 = require('uuid/v4')()
-const toolProxyJSON = require('../config/tool_proxy')
+const toolProxyJSON = require('../config/toolProxy')
 
 exports.register = (req, res) => {
   const endpoint = req.body.tc_profile_url
@@ -118,7 +118,7 @@ function configureOAuth (req, res) {
 }
 
 function authorizationJwtRequest (req, res, tcp, toolProxyResponse) {
-  const authorizationJWT = generateJWT(req, tcp, toolProxyResponse)
+  const signedJwt = signedJwt(req, tcp, toolProxyResponse)
   const service = buildTcpServiceUrl(tcp, 1)
 
   axios({
@@ -126,7 +126,7 @@ function authorizationJwtRequest (req, res, tcp, toolProxyResponse) {
     method: 'POST',
     data: {
       grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: authorizationJWT
+      assertion: signedJwt
     }
   })
   .then((res) => {
@@ -137,7 +137,7 @@ function authorizationJwtRequest (req, res, tcp, toolProxyResponse) {
   })
 }
 
-function generateJWT (req, tcp, toolProxyResponse) {
+function signedJwt (req, tcp, toolProxyResponse) {
   const toolProxyGuid = toolProxyResponse.data.tool_proxy_guid
   const service = buildTcpServiceUrl(tcp, 1)
   const secret = toolProxyResponse.data.tc_half_shared_secret + req.body.reg_password

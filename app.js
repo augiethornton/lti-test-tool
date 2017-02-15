@@ -3,7 +3,6 @@ const app = express()
 const bodyParser = require('body-parser')
 const routes  = require('./routes/index')
 
-
 const middleware = {
   logger: (req, res, next) => {
     console.log('Request: ' + req.method + ' ' + req.originalUrl)
