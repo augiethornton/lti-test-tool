@@ -1,4 +1,4 @@
-const uuidV4 = require('uuid/v4')()
+const uuid = require('uuid/v4')()
 
 module.exports = {
 
@@ -6,7 +6,7 @@ module.exports = {
 
   "@type": "ToolProxy",
 
-  "@id": "instructure.com/ToolProxy/" + uuidV4,
+  "@id": "instructure.com/ToolProxy/" + uuid,
 
   "lti_version": "LTI-2p1",
 
@@ -16,19 +16,14 @@ module.exports = {
 
   "security_contract": {
     "tp_half_shared_secret": "",
-    "tool_service": [
-      { "@type": "RestService",
-        "service": "",
-        "action": ["POST", "PUT", "GET"]
-      }
-    ]
+    "tool_service": []
   },
   "tool_consumer_profile": "",
 
   "tool_profile": {
     "lti_version": "LTI-2p1",
     "product_instance": {
-      "guid": uuidV4,
+      "guid": uuid,
       "product_info": {
         "product_name": {
           "default_value": "lti-test-tool"
