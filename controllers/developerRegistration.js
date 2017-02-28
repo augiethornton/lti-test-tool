@@ -33,7 +33,7 @@ function toolProxyRequest (req, res, customTCP) {
   const toolProxyData = buildToolProxyData(req, customTCP)
   
   authorizationJwtRequest (req, res).then((authJwt) => {
-	  axios({
+    axios({
       url: endpoint,
       method: method,
       headers: {
@@ -42,14 +42,14 @@ function toolProxyRequest (req, res, customTCP) {
       },
       data: toolProxyData
     })
-	  .then((toolProxyResponse) => {
-	    const returnURL =
-	      `${req.body.launch_presentation_return_url}?tool_proxy_guid=${toolProxyResponse.data.tool_proxy_guid}&status=success`
-	    res.send(`<script> window.location = "${returnURL}" </script>`)
-	  })
-	  .catch((err) => {
-	    console.log(err)
-	  })
+    .then((toolProxyResponse) => {
+      const returnURL =
+        `${req.body.launch_presentation_return_url}?tool_proxy_guid=${toolProxyResponse.data.tool_proxy_guid}&status=success`
+      res.send(`<script> window.location = "${returnURL}" </script>`)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   })
 }
 
