@@ -27,7 +27,7 @@ exports.register = (req, res) => {
 }
 
 function toolProxyRequest (req, res, customTCP) {
-	const method = 'POST'
+  const method = 'POST'
   const service = url.parse(customTCP.data.service_offered[0]['endpoint'])
   const endpoint = service.protocol + '//' + service.hostname + service.path
   const toolProxyData = buildToolProxyData(req, customTCP)
