@@ -12,7 +12,7 @@ module.exports = {
 
   "tool_proxy_guid": "",
 
-  "enabled_capability": [ "Security.splitSecret" ],
+  "enabled_capability": [ "Security.splitSecret", "vnd.Canvas.webhooks.root_account.all" ],
 
   "security_contract": {
     "tp_half_shared_secret": "",

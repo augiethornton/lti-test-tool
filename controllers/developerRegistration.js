@@ -3,11 +3,11 @@ const url = require('url')
 const jwt = require('jsonwebtoken')
 const uuid = require('uuid/v4')
 const toolProxyJSON = require('../config/toolProxy')
+const CanvasAuthorizationJwt = require('../helpers/developerRegistrationHelper')
 
 exports.register = (req, res) => {
   
   authorizationJwtRequest (req, res).then((authJwt) => {
-    console.log(req.body.tc_profile_url)
     axios({
       url: req.body.tc_profile_url,
       method: 'GET',
@@ -46,6 +46,11 @@ function toolProxyRequest (req, res, customTCP) {
       const returnURL =
         `${req.body.launch_presentation_return_url}?tool_proxy_guid=${toolProxyResponse.data.tool_proxy_guid}&status=success`
       res.send(`<script> window.location = "${returnURL}" </script>`)
+      setTimeout(() => {
+        CanvasAuthorizationJwt (req, res, toolProxyResponse).then((canvasJwt) => {
+          console.log(canvasJwt)
+        })
+      }, 5000)
     })
     .catch((err) => {
       console.log(err)
