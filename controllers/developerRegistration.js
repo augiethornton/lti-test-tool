@@ -6,7 +6,7 @@ const toolProxyJSON = require('../config/toolProxy')
 const CanvasAuthorizationJwt = require('../helpers/developerRegistrationHelper')
 
 exports.register = (req, res) => {
-  
+
   authorizationJwtRequest (req, res).then((authJwt) => {
     axios({
       url: req.body.tc_profile_url,
@@ -17,7 +17,6 @@ exports.register = (req, res) => {
       }
     })
     .then((customTCP) => {
-      console.log(customTCP.data)
       toolProxyRequest(req, res, customTCP)
     })
     .catch((err) => {
@@ -28,13 +27,15 @@ exports.register = (req, res) => {
 
 function toolProxyRequest (req, res, customTCP) {
   const method = 'POST'
-  const service = url.parse(customTCP.data.service_offered[0]['endpoint'])
-  const endpoint = service.protocol + '//' + service.hostname + service.path
+  const service = customTCP.data.service_offered.find((srv) => {
+    return srv.format.includes('application/vnd.ims.lti.v2.toolproxy+json') &&
+           srv.action.includes('POST')
+  })
   const toolProxyData = buildToolProxyData(req, customTCP)
-  
+
   authorizationJwtRequest (req, res).then((authJwt) => {
     axios({
-      url: endpoint,
+      url: service.endpoint,
       method: method,
       headers: {
         'Authorization': `Bearer ${authJwt}`,
@@ -48,7 +49,7 @@ function toolProxyRequest (req, res, customTCP) {
       res.send(`<script> window.location = "${returnURL}" </script>`)
       setTimeout(() => {
         CanvasAuthorizationJwt (req, res, toolProxyResponse).then((canvasJwt) => {
-          console.log(canvasJwt)
+          console.log(`Canvas JWT: ${canvasJwt}`)
         })
       }, 5000)
     })
@@ -73,52 +74,33 @@ function buildToolProxyData (req, customTCP) {
 }
 
 function authorizationJwtRequest (req, res) {
-  
-  function buildTcpAuthUrl (req) {
-    return new Promise((resolve, reject) => {
-      axios({
-        url: req.body.tc_profile_url,
-        method: 'GET'
-      })
-      .then((tcp) => {
-        const endpoint = url.parse(tcp.data.service_offered[2]['endpoint'])
-        const authUrl = endpoint.protocol + '//' + endpoint.hostname + endpoint.path
-        resolve(authUrl)
-      })
-      .catch((err) => {
-        reject(console.log(err))
-      })
-    })   
-  }
-  
+
   return new Promise((resolve, reject) => {
-    buildTcpAuthUrl(req).then((authUrl) => {
-      const authJwt = signJwt(req, authUrl)
-	
-      axios({
-        url: authUrl,
-        method: 'POST',
-        data: {
-          grant_type: 'authorization_code',
-          code: req.body.reg_key,
-          assertion: authJwt
-        }
-      })
-      .then((res) => {
-        resolve(res.data.access_token)
-      })
-      .catch((err) => {
-        reject(console.log(err))
-      })
+    const authJwt = signJwt(req)
+
+    axios({
+      url: req.body.oauth2_access_token_url,
+      method: 'POST',
+      data: {
+        grant_type: 'authorization_code',
+        code: req.body.reg_key,
+        assertion: authJwt
+      }
+    })
+    .then((res) => {
+      resolve(res.data.access_token)
+    })
+    .catch((err) => {
+      reject(console.log(err))
     })
   })
 }
 
-function signJwt (req, authUrl) {
+function signJwt (req) {
 	const secret = process.env.DEVELOPER_KEY_API_KEY
 	const payload = {
     "sub": process.env.DEVELOPER_KEY_GLOBAL_ID,
-    "aud": authUrl,
+    "aud": req.body.oauth2_access_token_url,
     "jti": uuid()
   }
   return jwt.sign(payload, secret, { expiresIn: '1m' })

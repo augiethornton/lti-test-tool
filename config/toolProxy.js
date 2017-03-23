@@ -6,18 +6,23 @@ module.exports = {
 
   "@type": "ToolProxy",
 
-  "@id": "instructure.com/ToolProxy/" + uuid,
+  "@id": `instructure.com/ToolProxy/${uuid}`,
 
   "lti_version": "LTI-2p1",
 
   "tool_proxy_guid": "",
 
-  "enabled_capability": [ "Security.splitSecret", "vnd.Canvas.webhooks.root_account.all" ],
+  "enabled_capability": [
+    "Security.splitSecret",
+    "vnd.Canvas.webhooks.root_account.all",
+    "Canvas.placements.similarityDetection"
+  ],
 
   "security_contract": {
     "tp_half_shared_secret": "",
     "tool_service": []
   },
+
   "tool_consumer_profile": "",
 
   "tool_profile": {
@@ -46,6 +51,15 @@ module.exports = {
         }
       }
     },
+    "service_offered": [
+      {
+        "@type" : "RestService",
+        "@id" : `http://nodelti.docker/service/${uuid}#vnd.Canvas.SubmissionEvent`,
+        "endpoint" : "http://test.com/submission",
+        "format" : ["application/json"],
+        "action" : ["POST"]
+      }
+    ],
     "base_url_choice": [
       { "default_base_url": process.env.BASE_URL || "http://localhost:3000",
         "selector": {
@@ -65,9 +79,9 @@ module.exports = {
           "message_type": "basic-lti-launch-request",
           "path": "/launch",
           "enabled_capability": [
-          	"Canvas.placements.similarityDetection", "Message.documentTarget", "Message.locale", 
-          	"ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId", 
-          	"Membership.role", "Context.id"
+            "Canvas.placements.similarityDetection", "Message.documentTarget", "Message.locale",
+            "ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId",
+            "Membership.role", "Context.id"
           ]
         }]
       }

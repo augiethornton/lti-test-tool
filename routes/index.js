@@ -7,9 +7,9 @@ router.get('/', (req, res) => {
   res.render('index', { title: 'LTI Test Tool' })
 })
 
-router.post('/register', consumerRegistration.register)
+router.post('/register_oauth', consumerRegistration.register)
 
-router.post('/register_dev', developerRegistration.register)
+router.post('/register', developerRegistration.register)
 
 router.post('/launch', launch.similarityDetection)
 
