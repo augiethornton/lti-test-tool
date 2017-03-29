@@ -1,4 +1,4 @@
-FROM instructure/node:6
+FROM instructure/node:7.5-yarn
 
 USER root
 

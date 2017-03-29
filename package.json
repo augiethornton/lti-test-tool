@@ -4,7 +4,8 @@
   "description": "Module for building an LTI Tool Provider for testing and integration",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha **/*.test.js",
+    "test-watch": "nodemon --exec 'npm test'"
   },
   "repository": {
     "type": "git",
@@ -13,8 +14,7 @@
   "keywords": [
     "ims",
     "lti",
-    "tool",
-    "provider"
+    "tool-provider"
   ],
   "author": "August Thornton",
   "license": "ISC",
@@ -28,6 +28,13 @@
     "oauth-1.0a": "^2.1.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "superagent": "^3.5.2",
     "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*",
+    "nodemon": "*",
+    "supertest": "*"
   }
 }

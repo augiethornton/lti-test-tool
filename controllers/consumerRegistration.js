@@ -1,4 +1,4 @@
-const axios = require('axios')
+const request = require('superagent')
 const OAuth = require('oauth-1.0a')
 const crypto = require('crypto')
 const url = require('url')
@@ -6,60 +6,44 @@ const jwt = require('jsonwebtoken')
 const toolProxyJSON = require('../config/toolProxy')
 
 exports.register = (req, res) => {
-  const endpoint = req.body.tc_profile_url
-  const method = 'GET'
-  const oauth = configureOAuth(req, res)
-  const request = {
-    method: method,
-    url: endpoint,
-    includeBodyHash: true
-  }
 
-  axios({
-    url: endpoint,
-    method: method,
-    headers: {
-      'Authorization': oauth.toHeader(oauth.authorize(request))['Authorization'],
-      'Content-Type': 'application/vnd.ims.lti.v2.toolproxy+json'
-    }
-  })
-  .then((tcp) => {
-    toolProxyRequest(req, res, tcp)
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+  request
+    .get(req.body.tc_profile_url)
+    .set('Content-Type', 'application/vnd.ims.lti.v2.toolproxy+json')
+    .then((tcp) => {
+      toolProxyRequest(req, res, tcp)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 function toolProxyRequest (req, res, tcp) {
   const endpoint = buildTcpServiceUrl(tcp, 0)
-  const method = 'POST'
-  const request = requestData(req, endpoint, method, tcp)
+  const request = requestData(req, endpoint, tcp)
   const oauth = configureOAuth(req)
 
-  axios({
-    url: request.url,
-    method: request.method,
-    headers: {
+  request
+    .post(request.url)
+    .set({
       'Authorization': oauth.toHeader(oauth.authorize(request))['Authorization'],
       'Content-Type': 'application/vnd.ims.lti.v2.toolproxy+json'
-    },
-    data: request.data
-  })
-  .then((toolProxyResponse) => {
-    const returnURL =
-      `${req.body.launch_presentation_return_url}?tool_proxy_guid=${toolProxyResponse.data.tool_proxy_guid}&status=success`
-    res.send(`<script> window.location = "${returnURL}" </script>`)
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+    })
+    .send(request.data)
+    .then((toolProxyResponse) => {
+      const returnURL =
+        `${req.body.launch_presentation_return_url}?tool_proxy_guid=${toolProxyResponse.data.tool_proxy_guid}&status=success`
+      res.send(`<script> window.location = "${returnURL}" </script>`)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
-function requestData (req, endpoint, method, tcp) {
+function requestData (req, endpoint, tcp) {
   const toolProxyData = buildToolProxyData(req, tcp)
   const requestObject = {
-    method: method,
+    method: 'POST',
     url: endpoint,
     includeBodyHash: true,
     data: toolProxyData
