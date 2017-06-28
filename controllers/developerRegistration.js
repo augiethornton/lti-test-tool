@@ -16,6 +16,7 @@ exports.register = (req, res) => {
         'Content-Type': 'application/vnd.ims.lti.v2.toolproxy+json'
       })
       .then((customTCP) => {
+        console.log(customTCP.body.service_offered)
         toolProxyRequest(req, res, customTCP)
       })
       .catch((err) => {

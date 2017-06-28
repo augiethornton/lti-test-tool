@@ -14,7 +14,7 @@ module.exports = {
 
   "enabled_capability": [
     "Security.splitSecret",
-    "vnd.Canvas.webhooks.root_account.all",
+    "vnd.instructure.webhooks.root_account.all",
     "Canvas.placements.similarityDetection"
   ],
 
@@ -75,15 +75,28 @@ module.exports = {
         "resource_name": {
           "default_value": "lti-test-tool"
         },
-        "message": [{
-          "message_type": "basic-lti-launch-request",
-          "path": "/launch",
-          "enabled_capability": [
-            "Canvas.placements.similarityDetection", "Message.documentTarget", "Message.locale",
-            "ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId",
-            "Membership.role", "Context.id"
-          ]
-        }]
+        "message": [
+          {
+            "message_type": "basic-lti-launch-request",
+            "path": "/launch",
+            "enabled_capability": [
+              "Canvas.placements.similarityDetection", "Message.documentTarget", "Message.locale",
+              "ToolConsumerInstance.guid", "CourseSection.sourcedId", "Person.sourcedId",
+              "Membership.role", "Context.id", "vnd.Canvas.OriginalityReport.url",
+              "vnd.Canvas.submission.url"
+            ],
+            "parameter": [
+              {
+                "name": "submission_history_url",
+                "variable": "vnd.Canvas.submission.history.url"
+              },
+              {
+                "name": "course_id",
+                "variable": "Canvas.course.id"
+              }
+            ]
+          }
+        ]
       }
     ]
   }
